@@ -1,0 +1,42 @@
+Connections (MSP430FR5969 <-> STM32F407G--STM32F446)
+Nota AN2606 (p.128)
+P1.3 <-> BOOT0      
+P1.4 <-> PB2 (BOOT1)          
+P1.5 <-> NRST
+P2.5Tx <-> PB11	--	PA10
+P2.6Rx <-> PB10	--	PA9 
+
+NO CONECTAR 5 VOLTS AL UART de pruebas solo Tx,Rx,GND
+Solo conectar los GND iguales
+
+MSP430FR5969 to FRAM Connections
+P1.6 <-> MOSI (SDI)
+P1.7 <-> MISO (SDO)
+P2.2 <-> CLK
+P1.2 <-> CS
+
+Delicados con el alambrado
+
+Nombre de repositorio remoto (usado para los push): MSP_SUP
+
+Info: La versión 2 (v2) contiene la integración de todos los
+avances hasta el momento (09SEP2022) funciona correctamente
+a excepción de la interfaz con la memoria FRAM
+
+También se probaron el RTC y el LPM y funciona correctamente.
+Las funciones de escritura y lectura de FRAM y Flash trabajan con apuntadores.
+El tipo de dato del apuntador que trabaja FRAM aun es de 16 bits (uint para FRAM_read int para FRAM_write)
+Para Flash se usan elementos uint8_t 
+Tambien reciben como parametro el numero [n] de bytes para leer o escribir
+
+Ya logra recibir el programa desde la interfaz serial de PC y guardarlo en FRAM
+ademas de leer el programa de FRAM y escribirlo en Flash
+Se usa un buffer de memoria usando el parametro [n] para transportar el programa de FRAM a Flash
+
+Mediante un programa en python ejecutado en consola se forma la interfaz serial 
+que se comunica con el puerto COM asociado al UART0 del MSP430FR5969
+Se envian lineas individuales de codigo dentro de tramas UART que recibe 
+el MSP para despues verificar su integridad y poder guardar en FRAM linea por linea FRAM_REPROG
+Una vez guardadas todas las líneas de código en FRAM se puede cargar el programa al 
+UC maestro con la funcion masterReprogramationRutine que lee las lineas guardadas en FRAM
+apoyandose de un contador que registro el numero de lineas recibidas de la interfaz PC
